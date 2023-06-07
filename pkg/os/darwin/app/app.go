@@ -7,19 +7,19 @@ import (
 	"github.com/adrianriobo/goax/pkg/os/darwin/api/appkit"
 )
 
-type darwinAppHandler struct {
+type appHandler struct {
 	ref *appkit.NSRunningApplication
 }
 
-func (h darwinAppHandler) Click(elementID string) error {
-	return h.ref.Click(elementID)
+func (a *appHandler) Click(elementID string) error {
+	return a.ref.Click(elementID)
 }
 
-func (h darwinAppHandler) Check(elementID string) error {
-	return h.ref.Check(elementID)
+func (a *appHandler) Check(elementID string) error {
+	return a.ref.Check(elementID)
 }
 
-func GetApplication() (*darwinAppHandler, error) {
+func GetApplication() (*appHandler, error) {
 	ref, err := appkit.GetApplication()
-	return &darwinAppHandler{ref: ref}, err
+	return &appHandler{ref: ref}, err
 }

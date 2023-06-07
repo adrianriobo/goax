@@ -14,6 +14,7 @@ import (
 	"unsafe"
 
 	"github.com/adrianriobo/goax/pkg/os/darwin/api/util"
+	"github.com/adrianriobo/goax/pkg/util/logging"
 )
 
 type AXUIElementRef struct {
@@ -39,6 +40,13 @@ func (e *AXUIElementRef) Role() string {
 
 func (e *AXUIElementRef) Children() []*AXUIElementRef {
 	return e.children
+}
+
+func (a *AXUIElementRef) Print() {
+	logging.Debugf("type %s with name %s", a.role, a.id)
+	for _, child := range a.children {
+		child.Print()
+	}
 }
 
 func GetAXUIElementRef(ref util.Ref, parent *AXUIElementRef) (*AXUIElementRef, error) {

@@ -4,6 +4,7 @@
 package windows_accesibility_features
 
 import (
+	"fmt"
 	"os"
 	"syscall"
 	"unsafe"
@@ -16,6 +17,9 @@ import (
 
 var (
 	manager *wa.IUIAutomation
+
+	// https://github.com/tpn/winsdk-10/blob/master/Include/10.0.14393.0/um/UIAutomationClient.h
+	IID_IUIAutomationTextPattern = &ole.GUID{0x32eba289, 0x3583, 0x42c9, [8]byte{0x9c, 0x59, 0x3b, 0x6d, 0x9a, 0x1e, 0x9b, 0x6a}}
 )
 
 func Initalize() {
@@ -39,6 +43,16 @@ func GetActiveElement(name string, elementType int64) (*wa.IUIAutomationElement,
 		return nil, err
 	} else {
 		return GetElementFromParent(root, name, elementType)
+	}
+}
+
+func GetActiveElementByType(elementType int64) (*wa.IUIAutomationElement, error) {
+	root, err := getRootElement()
+	defer root.Release()
+	if err != nil {
+		return nil, err
+	} else {
+		return GetElementFromParentByType(root, elementType)
 	}
 }
 
@@ -76,10 +90,8 @@ func GetElementFromParentByType(parentElement *wa.IUIAutomationElement, elementT
 	return parentElement.FindFirst(wa.TreeScope_Children, condition)
 }
 
-func GetAllChildren(parentElement *wa.IUIAutomationElement, elementType int64) (*wa.IUIAutomationElementArray, error) {
-	condition, err := createPropertyCondition(
-		wa.UIA_ControlTypePropertyId,
-		ole.NewVariant(ole.VT_INT, elementType))
+func GetAllChildren(parentElement *wa.IUIAutomationElement, elementTypes []int64) (*wa.IUIAutomationElementArray, error) {
+	condition, err := createOrConditionForElements(elementTypes)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +116,13 @@ func GetElementRect(element *wa.IUIAutomationElement) (*win32wam.RECT, error) {
 func GetElementText(element *wa.IUIAutomationElement) (string, error) {
 	pattern, err := getValuePattern(element)
 	if err != nil {
+		pattern, err = getTextPattern(element)
+	}
+	if err != nil {
 		return "", err
+	}
+	if pattern == nil {
+		return "", nil
 	}
 	defer pattern.Release()
 	return pattern.Get_CurrentValue()
@@ -117,6 +135,27 @@ func SetElementValue(element *wa.IUIAutomationElement, value string) error {
 	}
 	defer pattern.Release()
 	return pattern.SetValue(value)
+}
+
+// https://learn.microsoft.com/en-us/windows/win32/api/uiautomationclient/nf-uiautomationclient-iuiautomationelement-get_currentcontroltype
+// HRESULT get_CurrentControlType(
+//
+//		CONTROLTYPEID *retVal
+//	  );
+func GetCurrentControlType(elem *wa.IUIAutomationElement) (name string, err error) {
+	var bstrName *uint16
+	hr, _, _ := syscall.Syscall(
+		elem.VTable().Get_CurrentControlType,
+		2,
+		uintptr(unsafe.Pointer(elem)),
+		uintptr(unsafe.Pointer(&bstrName)),
+		0)
+	if hr != 0 {
+		err = ole.NewError(hr)
+		return
+	}
+	name = ole.BstrToString(bstrName)
+	return
 }
 
 // https://docs.microsoft.com/en-us/windows/win32/api/uiautomationclient/nf-uiautomationclient-iuiautomation-createpropertycondition
@@ -148,6 +187,54 @@ func createAndCondition(condition1, condition2 *wa.IUIAutomationCondition) (newC
 	return manager.CreateAndCondition(condition1, condition2)
 }
 
+// https://learn.microsoft.com/en-us/windows/win32/api/uiautomationclient/nf-uiautomationclient-iuiautomation-createorcondition
+// HRESULT CreateOrCondition(
+//
+//		[in]          IUIAutomationCondition *condition1,
+//		[in]          IUIAutomationCondition *condition2,
+//		[out, retval] IUIAutomationCondition **newCondition
+//	  );
+func createOrCondition(condition1, condition2 *wa.IUIAutomationCondition) (newCondition *wa.IUIAutomationCondition, err error) {
+	hr, _, _ := syscall.Syscall6(
+		manager.VTable().CreateOrCondition,
+		4,
+		uintptr(unsafe.Pointer(manager)),
+		uintptr(unsafe.Pointer(condition1)),
+		uintptr(unsafe.Pointer(condition2)),
+		uintptr(unsafe.Pointer(&newCondition)),
+		0,
+		0)
+	if hr != 0 {
+		err = ole.NewError(hr)
+	}
+	return
+}
+
+// Helper function on top on create or condition based on element types
+func createOrConditionForElements(elementTypes []int64) (*wa.IUIAutomationCondition, error) {
+	var condition *wa.IUIAutomationCondition
+	for i, elementType := range elementTypes {
+		c, err := createPropertyCondition(
+			wa.UIA_ControlTypePropertyId,
+			ole.NewVariant(ole.VT_INT, elementType))
+		if err != nil {
+			return nil, err
+		}
+		if i == 0 {
+			condition = c
+		} else {
+			nc, err := createOrCondition(condition, c)
+			if err != nil {
+				return nil, err
+			}
+			condition = nc
+		}
+		// logging.Debugf("adding condition for %v", elementType)
+	}
+
+	return condition, nil
+}
+
 // https://docs.microsoft.com/en-us/windows/win32/api/uiautomationclient/nf-uiautomationclient-iuiautomationelement-findfirst
 // HRESULT FindFirst(
 //
@@ -177,15 +264,25 @@ func getRootElement() (root *wa.IUIAutomationElement, err error) {
 }
 
 func getValuePattern(element *wa.IUIAutomationElement) (*wa.IUIAutomationValuePattern, error) {
-	unknown, err := element.GetCurrentPattern(wa.UIA_ValuePatternId)
+	return getPattern(element, wa.UIA_ValuePatternId, wa.IID_IUIAutomationValuePattern)
+}
+
+func getTextPattern(element *wa.IUIAutomationElement) (*wa.IUIAutomationValuePattern, error) {
+	return getPattern(element, wa.UIA_TextPatternId, IID_IUIAutomationTextPattern)
+}
+
+func getPattern(element *wa.IUIAutomationElement, patternId wa.PATTERNID, patternInterfaceUID *ole.GUID) (*wa.IUIAutomationValuePattern, error) {
+	unknown, err := element.GetCurrentPattern(patternId)
 	if err != nil {
 		logging.Error(err)
 		return nil, err
 	}
+	if unknown == nil {
+		return nil, fmt.Errorf("pattern no applicable")
+	}
 	logging.Info("found value pattern for element %v", unknown)
 	defer unknown.Release()
-
-	disp, err := unknown.QueryInterface(wa.IID_IUIAutomationValuePattern)
+	disp, err := unknown.QueryInterface(patternInterfaceUID)
 	if err != nil {
 		logging.Error(err)
 		return nil, err
@@ -199,6 +296,9 @@ func getLegacyIAccessiblePattern(element *wa.IUIAutomationElement) (*IUIAutomati
 	if err != nil {
 		logging.Error(err)
 		return nil, err
+	}
+	if unknown == nil {
+		return nil, fmt.Errorf("pattern no applicable")
 	}
 	logging.Info("found LegacyIAccessible pattern for element %v", unknown)
 	defer unknown.Release()

@@ -1,9 +1,10 @@
 package app
 
 import (
-	"fmt"
 	"os/exec"
 	"time"
+
+	windowsApp "github.com/adrianriobo/goax/pkg/os/windows/app"
 )
 
 func osOpen(appPath string) error {
@@ -18,5 +19,5 @@ func osOpen(appPath string) error {
 
 func osLoad() (appHandler, error) {
 	//need to create an inspect a windows app
-	return nil, fmt.Errorf("not implemented yet")
+	return windowsApp.GetApplication()
 }
