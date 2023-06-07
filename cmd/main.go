@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/adrianriobo/goax/cmd/commands"
+	"github.com/adrianriobo/goax/cmd/app"
 	"github.com/adrianriobo/goax/pkg/util"
 	"github.com/adrianriobo/goax/pkg/util/logging"
 	"github.com/spf13/cobra"
@@ -64,7 +64,7 @@ func init() {
 
 	// Subcommands
 	rootCmd.AddCommand(
-		commands.GetOpenCmd())
+		app.GetCmd())
 }
 
 func runPrerun(cmd *cobra.Command) error {

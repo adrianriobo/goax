@@ -3,6 +3,8 @@ module github.com/adrianriobo/goax
 go 1.19
 
 require (
+	github.com/go-ole/go-ole v1.2.6
+	github.com/openstandia/w32uiautomation v0.0.0-20190416091226-c987b5b65d6b
 	github.com/sirupsen/logrus v1.9.2
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5

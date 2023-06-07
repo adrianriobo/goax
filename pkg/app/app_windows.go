@@ -1,11 +1,12 @@
 package app
 
 import (
+	"fmt"
 	"os/exec"
 	"time"
 )
 
-func osOpenApp(appPath string) error {
+func osOpen(appPath string) error {
 	cmd := exec.Command(appPath)
 	if err := cmd.Start(); err != nil {
 		return err
@@ -13,4 +14,9 @@ func osOpenApp(appPath string) error {
 	// delay to get window as active
 	time.Sleep(1 * time.Second)
 	return nil
+}
+
+func osLoad() (appHandler, error) {
+	//need to create an inspect a windows app
+	return nil, fmt.Errorf("not implemented yet")
 }

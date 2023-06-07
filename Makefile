@@ -14,10 +14,15 @@ vendor:
 	go mod vendor
 
 .PHONY: cross
-cross: clean $(BUILD_DIR)/darwin-amd64/goax $(BUILD_DIR)/windows-amd64/goax
+cross: clean $(BUILD_DIR)/darwin-amd64/goax $(BUILD_DIR)/windows-amd64/goax.exe
 
 $(BUILD_DIR)/darwin-amd64/goax: $(SOURCES)
 	CC=clang GOARCH=amd64 GOOS=darwin go build -o $(BUILD_DIR)/darwin-amd64/goax ./cmd
-$(BUILD_DIR)/windows-amd64/goax: $(SOURCES)
-	CC=clang GOARCH=amd64 GOOS=windows go build -o $(BUILD_DIR)/windows-amd64/goax ./cmd
+$(BUILD_DIR)/windows-amd64/goax.exe: $(SOURCES)
+	CC=clang GOARCH=amd64 GOOS=windows go build -o $(BUILD_DIR)/windows-amd64/goax.exe ./cmd
 
+.PHONY: build-darwin
+build-darwin: clean $(BUILD_DIR)/darwin-amd64/goax
+
+.PHONY: build-windows
+build-windows: clean $(BUILD_DIR)/windows-amd64/goax.exe

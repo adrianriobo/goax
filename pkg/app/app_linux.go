@@ -4,6 +4,10 @@ import (
 	"fmt"
 )
 
-func osOpenApp(appPath string) error {
+func osOpen(appPath string) error {
 	return fmt.Errorf("not implemented yet")
+}
+
+func osLoad() (appHandler, error) {
+	return nil, fmt.Errorf("not implemented yet")
 }

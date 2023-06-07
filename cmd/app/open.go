@@ -1,4 +1,4 @@
-package commands
+package app
 
 import (
 	"github.com/spf13/cobra"
@@ -8,11 +8,7 @@ import (
 	"github.com/adrianriobo/goax/pkg/app"
 )
 
-const (
-	appPath = "path"
-)
-
-func GetOpenCmd() *cobra.Command {
+func getOpenCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "open",
 		Short: "Open an application",
@@ -25,9 +21,8 @@ func GetOpenCmd() *cobra.Command {
 		},
 	}
 
-	// Command flags
-	flagSet := pflag.NewFlagSet("open", pflag.ExitOnError)
-	flagSet.StringP(appPath, "p", "", "path for the application to be open")
+	flagSet := pflag.NewFlagSet("app", pflag.ExitOnError)
+	flagSet.StringP(appPath, "p", "", "path for the application to be handle")
 	c.Flags().AddFlagSet(flagSet)
 
 	return c
@@ -35,5 +30,5 @@ func GetOpenCmd() *cobra.Command {
 
 func open() error {
 	a := app.New(viper.GetString(appPath))
-	return a.Open()
+	return a.Open(onlyOpen)
 }
