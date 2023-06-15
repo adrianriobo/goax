@@ -59,7 +59,7 @@ func (a *AXElement) Print(hierarchy bool, idFilter string, strict bool) {
 func (a *AXElement) FindElements(id string, elementTypes []elements.ElementType, strict bool) (out []*AXElement) {
 	// Condition to match
 	match := (strict && strings.TrimSpace(a.ID) == id) ||
-		(!strict && strings.Contains(a.ID, id))
+		(!strict && strings.Contains(strings.TrimSpace(a.ID), id))
 	if match &&
 		(len(elementTypes) > 0 && slices.Contains(elementTypes, *a.ElementType) ||
 			len(elementTypes) == 0) {
@@ -79,7 +79,7 @@ func (a *AXElement) print(nodeLevel int, hierarchy bool, idFilter string, strict
 		}
 		if len(idFilter) == 0 ||
 			(len(idFilter) > 0 && strict && strings.TrimSpace(a.ID) == idFilter) ||
-			(len(idFilter) > 0 && !strict && strings.Contains(a.ID, idFilter)) {
+			(len(idFilter) > 0 && !strict && strings.Contains(strings.TrimSpace(a.ID), idFilter)) {
 			logging.Debugf("element at node %d is %s with id %s", nodeLevel, elementType, a.ID)
 		}
 	}
