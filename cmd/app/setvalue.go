@@ -23,13 +23,15 @@ func getSetValueCmd() *cobra.Command {
 
 	// Command flags
 	flagSet := pflag.NewFlagSet("set-value", pflag.ExitOnError)
-	flagSet.StringP("element", "", "", "element id/value to be clicked")
+	flagSet.StringP("element", "e", "", "element id/value to be clicked")
 	flagSet.StringP("element-type", "t", "", "element type to be clicked")
 	flagSet.Bool("strict", false, "to force id match exactly with the element id")
 	flagSet.Int("order", 0, "in case multiple elements with same id, we can specify the order of the element within the list of elements")
+	flagSet.Bool("focus", false, "if focus flag is added it will add the value to the current focused textbox on the screen (if any)")
 	flagSet.StringP("value", "v", "", "value to be set on the element")
 	c.Flags().AddFlagSet(flagSet)
-	c.MarkFlagRequired("element")
+	c.MarkFlagRequired("value")
+	c.MarkFlagsMutuallyExclusive("focus", "element")
 	return c
 }
 
@@ -37,6 +39,9 @@ func setValue() error {
 	a, err := app.LoadForefrontApp()
 	if err != nil {
 		return err
+	}
+	if viper.IsSet("focus") {
+		return a.SetValueOnFocus(viper.GetString("value"))
 	}
 	return a.SetValueWithOrder(
 		viper.GetString("element"),
