@@ -23,7 +23,7 @@ func getClickCmd() *cobra.Command {
 
 	// Command flags
 	flagSet := pflag.NewFlagSet("click", pflag.ExitOnError)
-	flagSet.StringP("element", "", "", "element id/value to be clicked")
+	flagSet.StringP("element", "e", "", "element id/value to be clicked")
 	flagSet.StringP("element-type", "t", "", "element type to be clicked")
 	flagSet.Bool("strict", false, "to force id match exactly with the element id")
 	flagSet.Int("order", 0, "in case multiple elements with same id, we can specify the order of the element within the list of elements")

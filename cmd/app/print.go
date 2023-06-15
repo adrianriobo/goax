@@ -23,7 +23,7 @@ func getPrintCmd() *cobra.Command {
 
 	// // Command flags
 	flagSet := pflag.NewFlagSet("print", pflag.ExitOnError)
-	flagSet.StringP("element", "", "", "element id/value to be filtered")
+	flagSet.StringP("element", "e", "", "element id/value to be filtered")
 	flagSet.Bool("strict", false, "to force id match exactly with the element id/value")
 	c.Flags().AddFlagSet(flagSet)
 
