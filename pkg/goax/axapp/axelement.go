@@ -80,9 +80,9 @@ func (a *AXElement) print(nodeLevel int, hierarchy bool, idFilter string, strict
 		if a.ElementType != nil {
 			elementType = string(*a.ElementType)
 		}
-		if len(idFilter) == 0 ||
+		if a.ID != "unknown" && (len(idFilter) == 0 ||
 			(len(idFilter) > 0 && strict && strings.TrimSpace(a.ID) == idFilter) ||
-			(len(idFilter) > 0 && !strict && strings.Contains(strings.TrimSpace(a.ID), idFilter)) {
+			(len(idFilter) > 0 && !strict && strings.Contains(strings.TrimSpace(a.ID), idFilter))) {
 			logging.Debugf("element at node %d is %s with id %s", nodeLevel, elementType, a.ID)
 		}
 	}
