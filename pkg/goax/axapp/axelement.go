@@ -31,12 +31,15 @@ func GetAXElement(element axAPI.OSAXElement, parent *AXElement) (*AXElement, err
 	out.Children = children
 	elementType, err := element.GetType()
 	if err != nil {
-		logging.Errorf("error getting type for ax element: %v", err)
+		// logging.Errorf("error getting type for ax element: %v", err)
+		nonSupported := elements.NONSUPPORTED
+		elementType = &nonSupported
 	}
 	out.ElementType = elementType
-	id, _ := element.GetID()
+	id, err := element.GetID()
 	if err != nil {
-		logging.Errorf("error getting id for ax element: %v", err)
+		// logging.Errorf("error getting id for ax element: %v", err)
+		id = "unknown"
 	}
 	out.ID = id
 	// value, err := element.GetValue()
