@@ -1,7 +1,10 @@
+//go:build windows
+
 package ax
 
 import (
 	"fmt"
+	"time"
 
 	axAPI "github.com/adrianriobo/goax/pkg/goax/axapp/api"
 	appElements "github.com/adrianriobo/goax/pkg/goax/elements"
@@ -38,7 +41,10 @@ func GetForegroundRootAXElement() (axAPI.OSAXElement, error) {
 	util.Initialize()
 	// // Initialize context
 	// win32waf.Initalize()
+	time.Sleep(1 * time.Second)
 	hwnd, err := win32wam.GetForegroundWindow()
+	// We can get the full desktop (this allows to get access to tray)
+	// hwnd, err := win32wam.GetDesktopWindow()
 	if err != nil {
 		return nil, err
 	}

@@ -18,6 +18,11 @@ var (
 	findWindowW              = user32.MustFindProc("FindWindowW")
 	findWindowEx             = user32.MustFindProc("FindWindowExW")
 	getForegroundWindow      = user32.MustFindProc("GetForegroundWindow")
+	setForegroundWindow      = user32.MustFindProc("SetForegroundWindow")
+	bringWindowToTop         = user32.MustFindProc("BringWindowToTop")
+	attachThreadInput        = user32.MustFindProc("AttachThreadInput")
+	getActiveWindow          = user32.MustFindProc("GetActiveWindow")
+	getDesktopWindow         = user32.MustFindProc("GetDesktopWindow")
 	getClassNameW            = user32.MustFindProc("GetClassNameW")
 	sendMessageW             = user32.MustFindProc("SendMessageW")
 	sendMessageA             = user32.MustFindProc("SendMessageA")
@@ -135,6 +140,73 @@ func FindWindowEx(hwndParent, hwndChildAfter syscall.Handle, lpszClass, lpszWind
 // HWND GetForegroundWindow();
 func GetForegroundWindow() (hwnd syscall.Handle, err error) {
 	r0, _, e1 := syscall.Syscall(getForegroundWindow.Addr(), 0,
+		0,
+		0,
+		0)
+	hwnd, err = util.EvalSyscallHandler(r0, e1)
+	return
+}
+
+// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow
+// HWND SetForegroundWindow();
+func SetForegroundWindow(hwnd syscall.Handle) (isBrought bool, err error) {
+
+	r0, _, e1 := syscall.Syscall(setForegroundWindow.Addr(), 1,
+		uintptr(hwnd),
+		0,
+		0)
+
+	isBrought, err = util.EvalSyscallBool(r0, e1)
+	return
+}
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-bringwindowtotop
+// BOOL BringWindowToTop(
+//
+//		[in] HWND hWnd
+//	  );
+func BringWindowToTop(hwnd syscall.Handle) (isBrought bool, err error) {
+	r0, _, e1 := syscall.Syscall(bringWindowToTop.Addr(), 1,
+		uintptr(hwnd),
+		0,
+		0)
+
+	isBrought, err = util.EvalSyscallBool(r0, e1)
+	return
+}
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-attachthreadinput
+// BOOL AttachThreadInput(
+//
+//		[in] DWORD idAttach,
+//		[in] DWORD idAttachTo,
+//		[in] BOOL  fAttach
+//	  );
+func AttachThreadInput(idAttach, idAttachTo *uint32, fAttach bool) (isBrought bool, err error) {
+	r0, _, e1 := syscall.Syscall(attachThreadInput.Addr(), 3,
+		uintptr(unsafe.Pointer(idAttach)),
+		uintptr(unsafe.Pointer(idAttachTo)),
+		0)
+
+	isBrought, err = util.EvalSyscallBool(r0, e1)
+	return
+}
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getactivewindow
+// HWND GetActiveWindow();
+func GetActiveWindow() (hwnd syscall.Handle, err error) {
+	r0, _, e1 := syscall.Syscall(getActiveWindow.Addr(), 0,
+		0,
+		0,
+		0)
+	hwnd, err = util.EvalSyscallHandler(r0, e1)
+	return
+}
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdesktopwindow
+// HWND GetDesktopWindow();
+func GetDesktopWindow() (hwnd syscall.Handle, err error) {
+	r0, _, e1 := syscall.Syscall(getDesktopWindow.Addr(), 0,
 		0,
 		0,
 		0)
