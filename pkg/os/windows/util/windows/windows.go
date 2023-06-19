@@ -10,7 +10,33 @@ import (
 
 	win32wam "github.com/adrianriobo/goax/pkg/os/windows/api/user-interface/windows-and-messages"
 	"github.com/adrianriobo/goax/pkg/util/logging"
+	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 )
+
+// To get a windows by title among all the windows on the system, it is required
+// to loop over all the windows and get the one with the same title text
+func GetAllWindowsProcess() (map[uint32]syscall.Handle, error) {
+	out := make(map[uint32]syscall.Handle)
+	cb := syscall.NewCallback(func(h syscall.Handle, p uintptr) uintptr {
+		var tbProcessID uint32
+		_, err := win32wam.GetWindowThreadProcessId(h, &tbProcessID)
+		// logging.Debugf("found one window with process id %v", tbProcessID)
+		if err != nil {
+			// ignore the error
+			return 1 // continue enumeration
+		}
+		if !slices.Contains(maps.Keys(out), tbProcessID) {
+			out[tbProcessID] = h
+		}
+		return 1 // continue enumeration
+	})
+	win32wam.EnumWindows(cb, 0)
+	// if hwnd == 0 {
+	// 	return 0, fmt.Errorf("No window for process with id '%v' found", processID)
+	// }
+	return out, nil
+}
 
 // To get a windows by title among all the windows on the system, it is required
 // to loop over all the windows and get the one with the same title text

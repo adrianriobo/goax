@@ -5,6 +5,7 @@ package ax
 
 import (
 	darwinax "github.com/adrianriobo/goax/pkg/os/darwin/ax"
+	"github.com/adrianriobo/goax/pkg/util/delay"
 )
 
 func osGetAXElement() (*AXElement, error) {
@@ -12,5 +13,6 @@ func osGetAXElement() (*AXElement, error) {
 	if err != nil {
 		return nil, err
 	}
+	delay.Delay(delay.MEDIUM)
 	return GetAXElement(rootAXElement, nil)
 }
