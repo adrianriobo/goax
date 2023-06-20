@@ -14,19 +14,19 @@ func Open(appPath string) error {
 	return nil
 }
 
-func LoadForefrontApp() (*App, error) {
+func LoadForefrontApp() (*app, error) {
 	handler, err := osLoad()
 	if err != nil {
 		return nil, err
 	}
-	return &App{handler: handler}, nil
+	return &app{handler: handler}, nil
 }
 
-func (a *App) Click(element, elementType string, strict bool) error {
+func (a *app) Click(element, elementType string, strict bool) error {
 	return a.ClickWithOrder(element, elementType, strict, 0)
 }
 
-func (a *App) ClickWithOrder(element, elementType string, strict bool, order int) error {
+func (a *app) ClickWithOrder(element, elementType string, strict bool, order int) error {
 	et, err := elements.GetElementType(elementType)
 	if err != nil {
 		return fmt.Errorf("error running click function: %v", err)
@@ -34,11 +34,11 @@ func (a *App) ClickWithOrder(element, elementType string, strict bool, order int
 	return a.handler.ClickWithOrder(element, et, strict, int8(order))
 }
 
-func (a *App) SetValue(element, elementType string, strict bool, value string) error {
+func (a *app) SetValue(element, elementType string, strict bool, value string) error {
 	return a.SetValueWithOrder(element, elementType, strict, 0, value)
 }
 
-func (a *App) SetValueWithOrder(element, elementType string, strict bool, order int, value string) error {
+func (a *app) SetValueWithOrder(element, elementType string, strict bool, order int, value string) error {
 	et, err := elements.GetElementType(elementType)
 	if err != nil {
 		return fmt.Errorf("error running set value function: %v", err)
@@ -46,12 +46,12 @@ func (a *App) SetValueWithOrder(element, elementType string, strict bool, order 
 	return a.handler.SetValueWithOrder(element, et, strict, int8(order), value)
 }
 
-func (a *App) SetValueOnFocus(value string) error {
+func (a *app) SetValueOnFocus(value string) error {
 	return a.handler.SetValueOnFocus(value)
 }
 
 // Check if an element exists within the app with the element id/value
-func (a *App) Exists(element, elementType string, strict bool) (bool, error) {
+func (a *app) Exists(element, elementType string, strict bool) (bool, error) {
 	et, err := elements.GetElementType(elementType)
 	if err != nil {
 		return false, fmt.Errorf("esrror running exists function: %v", err)
@@ -59,7 +59,7 @@ func (a *App) Exists(element, elementType string, strict bool) (bool, error) {
 	return a.handler.Exists(element, et, strict)
 }
 
-func (a *App) Print(idFilter string, strict bool) {
+func (a *app) Print(idFilter string, strict bool) {
 	a.handler.Print(idFilter, strict)
 }
 
