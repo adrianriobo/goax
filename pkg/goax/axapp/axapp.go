@@ -3,6 +3,7 @@ package ax
 import (
 	"fmt"
 
+	"github.com/adrianriobo/goax/pkg/goax/app/api"
 	"github.com/adrianriobo/goax/pkg/goax/elements"
 )
 
@@ -16,8 +17,8 @@ type AXApp struct {
 var (
 	clickableElements = []elements.ElementType{
 		elements.BUTTON, elements.HYPERLINK, elements.TEXT}
-	checkableElements = []elements.ElementType{
-		elements.CHECKBOX}
+	// checkableElements = []elements.ElementType{
+	// elements.CHECKBOX}
 	setableElements = []elements.ElementType{
 		elements.TEXT, elements.EDIT}
 )
@@ -25,7 +26,18 @@ var (
 // Get the frontground app from the system
 // and the hirarchy of accessible elements
 func GetAXApp() (*AXApp, error) {
-	ref, err := osGetAXElement()
+	ref, err := osGetAXElement(nil)
+	if err != nil {
+		return nil, err
+	}
+	return &AXApp{
+		ref: ref,
+	}, nil
+}
+
+// In case we already have a ref to an app we can just reload it
+func (a *AXApp) Reload() (api.AppHandler, error) {
+	ref, err := osGetAXElement(a.ref)
 	if err != nil {
 		return nil, err
 	}

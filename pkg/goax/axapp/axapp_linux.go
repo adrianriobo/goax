@@ -4,6 +4,6 @@ import (
 	"fmt"
 )
 
-func osGetAXElement() (*AXElement, error) {
+func osGetAXElement(element *AXElement) (*AXElement, error) {
 	return nil, fmt.Errorf("not implemented yet")
 }
