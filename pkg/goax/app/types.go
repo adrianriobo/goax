@@ -7,7 +7,7 @@ import (
 // representation on an app with a handler
 // which is able interact within the app to run
 // the operations defined by the interface
-type app struct {
+type App struct {
 	handler appHandler
 }
 
