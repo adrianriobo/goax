@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 
+	"github.com/adrianriobo/goax/pkg/goax/app/api"
 	ax "github.com/adrianriobo/goax/pkg/goax/axapp"
 	"github.com/adrianriobo/goax/pkg/goax/elements"
 )
@@ -16,6 +17,14 @@ func Open(appPath string) error {
 
 func LoadForefrontApp() (*app, error) {
 	handler, err := osLoad()
+	if err != nil {
+		return nil, err
+	}
+	return &app{handler: handler}, nil
+}
+
+func (a *app) Reload() (*app, error) {
+	handler, err := a.handler.Reload()
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +72,7 @@ func (a *app) Print(idFilter string, strict bool) {
 	a.handler.Print(idFilter, strict)
 }
 
-func osLoad() (appHandler, error) {
+func osLoad() (api.AppHandler, error) {
 	//need to create an inspect a windows app
 	return ax.GetAXApp()
 }
