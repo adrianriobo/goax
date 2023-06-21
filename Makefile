@@ -22,5 +22,8 @@ $(BUILD_DIR)/windows-amd64/goax.exe: $(SOURCES)
 .PHONY: build-darwin
 build-darwin: clean $(BUILD_DIR)/darwin-amd64/goax
 
+$(BUILD_DIR)/darwin-amd64/goax: $(SOURCES)
+	CC=clang GOARCH=amd64 GOOS=darwin go build -o $(BUILD_DIR)/darwin-amd64/goax ./cmd
+
 .PHONY: build-windows
 build-windows: clean $(BUILD_DIR)/windows-amd64/goax.exe
