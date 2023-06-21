@@ -11,10 +11,11 @@ import (
 
 func osGetAXElement(element *AXElement) (*AXElement, error) {
 	var rootAXElement axAPI.OSAXElement
+	var err error
 	if element != nil {
 		rootAXElement = element.Ref
 	} else {
-		rootAXElement, err := darwinax.GetForegroundRootAXElement()
+		rootAXElement, err = darwinax.GetForegroundRootAXElement()
 		if err != nil {
 			return nil, err
 		}
