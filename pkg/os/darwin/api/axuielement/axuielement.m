@@ -4,7 +4,7 @@
 // CFStringRef kAXManualAccessibility = CFSTR("AXManualAccessibility");
 
 const char* HasChildren(CFTypeRef axuielement) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXError err;
         CFArrayRef childrenPtr;
         NSString *result = @"true";
@@ -13,38 +13,38 @@ const char* HasChildren(CFTypeRef axuielement) {
             result = @"false";
         }
         return strdup([result UTF8String]);
-    // }
+    }
 }
 
 CFArrayRef GetChildren(CFTypeRef axuielement) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXError err;
         CFArrayRef childrenPtr;
         err = AXUIElementCopyAttributeValue(axuielement, kAXChildrenAttribute, (CFTypeRef *) &childrenPtr);
         return childrenPtr;
-    // }
+    }
 }
 
 CFTypeRef GetChild(CFArrayRef children, CFIndex index) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXUIElementRef objectChild = CFArrayGetValueAtIndex(children, index);
         return objectChild;
-    // }
+    }
 }
 
 const char* GetTitle(CFTypeRef axuielement) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXError err;
         NSString *att = nil;
         err = AXUIElementCopyAttributeValue(axuielement, kAXTitleAttribute, (CFTypeRef *) &att);
         if (err != kAXErrorSuccess) 
             return "";
         return strdup([att UTF8String]);
-    // }
+    }
 }
 
 const char* GetValue(CFTypeRef axuielement) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXError err;
         NSString *att = nil;
         err = AXUIElementCopyAttributeValue(axuielement, kAXValueAttribute, (CFTypeRef *) &att);
@@ -56,27 +56,27 @@ const char* GetValue(CFTypeRef axuielement) {
             return strdup([att UTF8String]);
         }
         return "";
-    // }
+    }
 }
 
 void SetValue(CFTypeRef axuielement, const char* value) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXError err;
         NSString *nValue = [NSString stringWithUTF8String:value];
         err = AXUIElementSetAttributeValue(axuielement, kAXValueAttribute, CFBridgingRetain(nValue));
         assert(kAXErrorSuccess == err);
-    // }
+    }
 }
 
 const char* GetDescription(CFTypeRef axuielement) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXError err;
         NSString *att = nil;
         err = AXUIElementCopyAttributeValue(axuielement, kAXDescriptionAttribute, (CFTypeRef *) &att);
         if (err != kAXErrorSuccess) 
             return "";
         return strdup([att UTF8String]);
-    // }
+    }
 }
 
 const char* GetRole(CFTypeRef axuielement) {

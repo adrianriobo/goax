@@ -35,6 +35,18 @@ func GetAXApp() (*AXApp, error) {
 	}, nil
 }
 
+// Get the frontground app from the system
+// and the hirarchy of accessible elements
+func GetAXAppByTypeAndTitle(appType, appTitle string) (*AXApp, error) {
+	ref, err := osGetAXElementByTypeAndTitle(appType, appTitle)
+	if err != nil {
+		return nil, err
+	}
+	return &AXApp{
+		ref: ref,
+	}, nil
+}
+
 // In case we already have a ref to an app we can just reload it
 func (a *AXApp) Reload() (api.AppHandler, error) {
 	ref, err := osGetAXElement(a.ref)

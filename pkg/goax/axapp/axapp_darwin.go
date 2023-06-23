@@ -23,3 +23,11 @@ func osGetAXElement(element *AXElement) (*AXElement, error) {
 	delay.Delay(delay.MEDIUM)
 	return GetAXElement(rootAXElement, nil)
 }
+
+func osGetAXElementByTypeAndTitle(appType, appTitle string) (*AXElement, error) {
+	rootAXElement, err := darwinax.GetAppByBundleAndTitleRootAXElement(appType, appTitle)
+	if err != nil {
+		return nil, err
+	}
+	return GetAXElement(rootAXElement, nil)
+}
