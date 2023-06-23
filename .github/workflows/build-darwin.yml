@@ -1,0 +1,37 @@
+name: build darwin
+
+on:
+  push:
+    branches: [ main ]
+    tags:        
+      - '*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macOS-12]
+        go: [1.19]
+        arch: [amd64, arm64]
+        
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: build darwin
+        run: ARCH=${{ matrix.arch }} make build-darwin
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: darwin-${{ matrix.arch }}
+          path: "./out/darwin-${{ matrix.arch }}/goax"

@@ -1,0 +1,37 @@
+name: build windows
+
+on:
+  push:
+    branches: [ main ]
+    tags:        
+      - '*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2019]
+        go: [1.19]
+        
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: build windows
+        run: make build-windows
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-amd64
+          path: "./out/windows-amd64/goax.exe"
+          
