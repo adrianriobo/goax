@@ -48,6 +48,17 @@ func GetForegroundRootAXElement() (axAPI.OSAXElement, error) {
 	return AXElement{ref: parentRef}, nil
 }
 
+// Get an app based on the bundle id and the title
+func GetAppByBundleAndTitleRootAXElement(bundleID, title string) (axAPI.OSAXElement, error) {
+	// Get the pointer to the frontmost application
+	appPointer := appkit.GetAppByBundleAndWindow(bundleID, title)
+	// Create ax element to access the app and get its reference
+	axRef := appkit.CreateAX(appPointer)
+	// Get the ax ref of the focused window
+	parentRef := appkit.GetAXFocusedWindow(axRef)
+	return AXElement{ref: parentRef}, nil
+}
+
 func (a AXElement) Press() error {
 	axuielement.Press(a.ref)
 	return nil

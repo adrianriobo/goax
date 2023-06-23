@@ -1,9 +1,9 @@
 #import "nsrunningapplication.h"
 
 void* FrontmostApplication(){
-    // @autoreleasepool {
+    @autoreleasepool {
         return [[NSWorkspace sharedWorkspace] frontmostApplication];
-    // }
+    }
 }
 
 void* FindRunningApplication(const char *bundleID, const char *windowTitle) {
@@ -60,7 +60,7 @@ const char* BundleIdentifier(void* nsRunningApplication) {
 }
 
 CFTypeRef CreateApplicationAXRef(void* appAXRef) {
-    // @autoreleasepool {
+    @autoreleasepool {
         NSRunningApplication* a = (NSRunningApplication*)appAXRef;
         pid_t pid = [a processIdentifier];
         AXUIElementRef appRef = AXUIElementCreateApplication(pid);
@@ -74,11 +74,11 @@ CFTypeRef CreateApplicationAXRef(void* appAXRef) {
         // NSLog(@"Get NSApplicationActivateAllWindows for app %@\n", focusedWindow2);
         
         return appRef;
-    // }
+    }
 }
 
 CFTypeRef GetAXFocusedWindow(CFTypeRef appAXRef) {
-    // @autoreleasepool {
+    @autoreleasepool {
         AXUIElementRef appRef = (AXUIElementRef)appAXRef;
         AXError err;
         AXUIElementRef focusedWindow = nil;
@@ -86,5 +86,5 @@ CFTypeRef GetAXFocusedWindow(CFTypeRef appAXRef) {
                                         (CFTypeRef *) &focusedWindow);
         assert(kAXErrorSuccess == err);
         return focusedWindow;
-    // }
+    }
 }
