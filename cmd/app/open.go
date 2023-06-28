@@ -23,11 +23,14 @@ func getOpenCmd() *cobra.Command {
 
 	flagSet := pflag.NewFlagSet("app", pflag.ExitOnError)
 	flagSet.StringP(appPath, "p", "", "path for the application to be handle")
+	flagSet.Bool("record", false, "capture screenshot")
 	c.Flags().AddFlagSet(flagSet)
 
 	return c
 }
 
 func open() error {
-	return app.Open(viper.GetString(appPath))
+	return app.Open(
+		viper.GetString(appPath),
+		viper.IsSet(record))
 }
