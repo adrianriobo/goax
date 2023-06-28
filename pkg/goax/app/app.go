@@ -6,11 +6,16 @@ import (
 	"github.com/adrianriobo/goax/pkg/goax/app/api"
 	ax "github.com/adrianriobo/goax/pkg/goax/axapp"
 	"github.com/adrianriobo/goax/pkg/goax/elements"
+	"github.com/adrianriobo/goax/pkg/util/logging"
+	"github.com/adrianriobo/goax/pkg/util/screenshot"
 )
 
-func Open(appPath string) error {
+func Open(appPath string, record bool) error {
 	if err := osOpen(appPath); err != nil {
 		return fmt.Errorf("error opening te application at path %s: %v", appPath, err)
+	}
+	if err := screenshot.CaptureScreen("", ""); err != nil {
+		logging.Errorf("error capturing the screenshot: %v", err)
 	}
 	return nil
 }

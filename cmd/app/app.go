@@ -6,6 +6,7 @@ import (
 
 const (
 	appPath = "app-path"
+	record  = "record"
 )
 
 func GetCmd() *cobra.Command {

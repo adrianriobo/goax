@@ -11,8 +11,8 @@ import (
 
 	win32ss "github.com/adrianriobo/goax/pkg/os/windows/api/system-services"
 	win32wam "github.com/adrianriobo/goax/pkg/os/windows/api/user-interface/windows-and-messages"
-	win32windows "github.com/adrianriobo/goax/pkg/os/windows/app/ux/windows"
-	win32process "github.com/adrianriobo/goax/pkg/os/windows/services/process"
+	win32process "github.com/adrianriobo/goax/pkg/os/windows/util/services/process"
+	win32windows "github.com/adrianriobo/goax/pkg/os/windows/util/windows"
 	"github.com/adrianriobo/goax/pkg/util/logging"
 )
 
