@@ -6,6 +6,13 @@ void* FrontmostApplication(){
     }
 }
 
+// Check access to the accessibility API
+BOOL CheckAccess() {
+    NSDictionary *options = @{(id)kAXTrustedCheckOptionPrompt : @YES};
+	BOOL access = AXIsProcessTrustedWithOptions((CFDictionaryRef)options);
+    return access;
+}
+
 void* FindRunningApplication(const char *bundleID, const char *windowTitle) {
     @autoreleasepool {
         NSString *nBundleID = [NSString stringWithUTF8String:bundleID];
