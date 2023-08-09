@@ -39,6 +39,12 @@ type AXElement struct {
 }
 
 func GetForegroundRootAXElement() (axAPI.OSAXElement, error) {
+
+	isEnabled := appkit.CheckAccess()
+	if !isEnabled {
+		return nil, fmt.Errorf("accessibility is not enabled, please check in your system preferences")
+	}
+
 	// Get the pointer to the frontmost application
 	appPointer := appkit.GetFrontmostApplication()
 	// Create ax element to access the app and get its reference

@@ -9,6 +9,9 @@ void* FindRunningApplication(const char* bundleID, const char* windowTitle);
 // Show all 
 void ShowAllApplications();
 
+// Check accessibility API
+BOOL CheckAccess();
+
 // https://developer.apple.com/documentation/appkit/nsrunningapplication/1529140-bundleidentifier?language=objc
 const char* BundleIdentifier(void* app);
 

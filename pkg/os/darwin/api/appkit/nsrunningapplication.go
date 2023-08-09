@@ -26,6 +26,15 @@ func GetAXFocusedWindow(ref util.Ref) util.Ref {
 	return util.Ref(fwAXRef)
 }
 
+// check if accessibility is enabled
+func CheckAccess() bool {
+	access := C.CheckAccess()
+
+	// convert untyped bool to int
+	safe := *(*uint64)(unsafe.Pointer(&access)) & 1
+	return safe == 1
+}
+
 // TODO windowTitle could be localized, how to handle that??
 func GetAppByBundleAndWindow(bundleID, windowTitle string) unsafe.Pointer {
 	cBundleID := C.CString(bundleID)
