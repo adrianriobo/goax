@@ -30,6 +30,7 @@ var elementTypes = map[int64]appElements.ElementType{
 	wa.UIA_ComboBoxControlTypeId:  appElements.COMBOBOX,
 	wa.UIA_DocumentControlTypeId:  appElements.DOCUMENT,
 	wa.UIA_HyperlinkControlTypeId: appElements.HYPERLINK,
+	wa.UIA_CustomControlTypeId:    appElements.CUSTOM,
 }
 
 type AXElement struct {

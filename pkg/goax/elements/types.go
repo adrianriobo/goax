@@ -24,5 +24,6 @@ const (
 	IMAGE        ElementType = "image"
 	TITLE        ElementType = "title"
 	AREA         ElementType = "area"
+	CUSTOM       ElementType = "custom"
 	NONSUPPORTED ElementType = "unknown"
 )
