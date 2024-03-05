@@ -1,11 +1,16 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
 	"github.com/adrianriobo/goax/pkg/goax/app"
+	"github.com/adrianriobo/goax/pkg/util/delay"
+	"github.com/adrianriobo/goax/pkg/util/logging"
+	"github.com/adrianriobo/goax/pkg/util/screenshot"
 )
 
 func getSetValueCmd() *cobra.Command {
@@ -29,6 +34,8 @@ func getSetValueCmd() *cobra.Command {
 	flagSet.Int("order", 0, "in case multiple elements with same id, we can specify the order of the element within the list of elements")
 	flagSet.Bool("focus", false, "if focus flag is added it will add the value to the current focused textbox on the screen (if any)")
 	flagSet.StringP("value", "v", "", "value to be set on the element")
+	flagSet.Bool(record, false, recordDesc)
+	flagSet.StringP(recordsPath, "", recordsPathDefault, recordsPathDesc)
 	c.Flags().AddFlagSet(flagSet)
 	c.MarkFlagRequired("value")
 	c.MarkFlagsMutuallyExclusive("focus", "element")
@@ -40,13 +47,29 @@ func setValue() error {
 	if err != nil {
 		return err
 	}
+	delay.Delay(delay.LONG)
+	if viper.IsSet(record) {
+		if err := screenshot.CaptureScreen(viper.GetString(recordsPath), "setValueLoadForefrontApp"); err != nil {
+			logging.Errorf("error capturing the screenshot: %v", err)
+		}
+	}
 	if viper.IsSet("focus") {
 		return a.SetValueOnFocus(viper.GetString("value"))
 	}
-	return a.SetValueWithOrder(
+	if err := a.SetValueWithOrder(
 		viper.GetString("element"),
 		viper.GetString("element-type"),
 		viper.IsSet("strict"),
 		viper.GetInt("order"),
-		viper.GetString("value"))
+		viper.GetString("value")); err != nil {
+		return err
+	}
+	delay.Delay(delay.LONG)
+	if viper.IsSet(record) {
+		sfn := fmt.Sprintf("setValue-%s", viper.GetString("element"))
+		if err := screenshot.CaptureScreen(viper.GetString(recordsPath), sfn); err != nil {
+			logging.Errorf("error capturing the screenshot: %v", err)
+		}
+	}
+	return nil
 }

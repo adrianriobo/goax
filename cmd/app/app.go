@@ -5,7 +5,15 @@ import (
 )
 
 const (
-	appPath = "app-path"
+	appPath         = "app-path"
+	record          = "record"
+	recordDesc      = "capture screenshot"
+	recordsPath     = "records-path"
+	recordsPathDesc = "path to store the screeshots"
+)
+
+var (
+	recordsPathDefault = "."
 )
 
 func GetCmd() *cobra.Command {
