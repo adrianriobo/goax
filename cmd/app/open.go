@@ -6,6 +6,9 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/adrianriobo/goax/pkg/goax/app"
+	"github.com/adrianriobo/goax/pkg/util/delay"
+	"github.com/adrianriobo/goax/pkg/util/logging"
+	"github.com/adrianriobo/goax/pkg/util/screenshot"
 )
 
 func getOpenCmd() *cobra.Command {
@@ -23,11 +26,23 @@ func getOpenCmd() *cobra.Command {
 
 	flagSet := pflag.NewFlagSet("app", pflag.ExitOnError)
 	flagSet.StringP(appPath, "p", "", "path for the application to be handle")
+	flagSet.Bool(record, false, recordDesc)
+	flagSet.StringP(recordsPath, "", recordsPathDefault, recordsPathDesc)
 	c.Flags().AddFlagSet(flagSet)
-
 	return c
 }
 
 func open() error {
-	return app.Open(viper.GetString(appPath))
+	if err := app.Open(
+		viper.GetString(appPath)); err != nil {
+		return err
+	}
+	// We open remotely so we wait for a bit
+	delay.Delay(delay.LONG)
+	if viper.IsSet(record) {
+		if err := screenshot.CaptureScreen(viper.GetString(recordsPath), "openApp"); err != nil {
+			logging.Errorf("error capturing the screenshot: %v", err)
+		}
+	}
+	return nil
 }
