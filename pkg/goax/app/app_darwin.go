@@ -8,6 +8,6 @@ import (
 )
 
 func osOpen(appPath string) error {
-	cmd := exec.Command("open", appPath)
+	cmd := exec.Command("open", "-a", appPath)
 	return cmd.Start()
 }
