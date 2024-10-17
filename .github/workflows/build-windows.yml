@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-2019]
-        go: ['1.21']
+        go: ['1.22']
         
     steps:
       - name: Check out repository code

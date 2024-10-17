@@ -1,0 +1,13 @@
+name: check-licenses
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-licenses:
+    runs-on: ubuntu-24.04
+    name: licenses check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Syu-fu/go-licenses@v0.1.0
