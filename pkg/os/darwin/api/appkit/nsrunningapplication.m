@@ -16,13 +16,13 @@ BOOL CheckAccess() {
 void* FindRunningApplication(const char *bundleID, const char *windowTitle) {
     @autoreleasepool {
         NSString *nBundleID = [NSString stringWithUTF8String:bundleID];
-        // NSLog(@"Bundle is %@ \n", nBundleID);
+        NSLog(@"Bundle is %@ \n", nBundleID);
         NSString *nWindowTitle = [NSString stringWithUTF8String:windowTitle];
-        // NSLog(@"WindowTitle is %@ \n", nWindowTitle);
+        NSLog(@"WindowTitle is %@ \n", nWindowTitle);
         NSWorkspace* workspace = [NSWorkspace sharedWorkspace];
         NSArray* runningApps = [workspace runningApplications];
         for (NSRunningApplication* app in runningApps) {
-            // NSLog(@"app bundle %@ \n", [app bundleIdentifier]);
+            NSLog(@"app bundle %@ \n", [app bundleIdentifier]);
             pid_t pid = [app processIdentifier];
             AXUIElementRef appRef = AXUIElementCreateApplication(pid);
             AXError err;
